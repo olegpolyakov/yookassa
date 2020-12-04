@@ -1,6 +1,6 @@
 {
   "name": "yookassa",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "YooKassa API for Node.js",
   "main": "index.js",
   "scripts": {
