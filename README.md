@@ -1,0 +1,1 @@
+# Yandex.Kassa API for Node.js

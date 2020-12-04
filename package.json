@@ -1,0 +1,21 @@
+{
+  "name": "yookassa",
+  "version": "0.0.1",
+  "description": "YooKassa API for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "request": "^2.80.0"
+  },
+  "keywords": [
+    "yookassa"
+  ],
+  "author": {
+    "name": "Oleg Polyakov",
+    "email": "olegpolyakov@outlook.com"
+  },
+  "repository": "olegpolyakov/yookassa",
+  "license": "MIT"
+}
