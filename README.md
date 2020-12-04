@@ -1,1 +1,1 @@
-# Yandex.Kassa API for Node.js
+# YooKassa API for Node.js
