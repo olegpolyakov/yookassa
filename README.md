@@ -1,6 +1,6 @@
-# YooKassa API для Node.js
+# Yookassa API для Node.js
 
-Клиент для работы с платежами по API YooKassa. Подходит тем, у кого способ подключения называется API.
+Клиент для работы с платежами по API Yookassa. Подходит тем, у кого способ подключения называется API.
 
 ## Требования
 
@@ -16,9 +16,9 @@ npm i yookassa
 ## Начало работы
 
 ```js
-const YooKassa = require('yookassa');
+const Yookassa = require('yookassa');
 
-const yooKassa = new YooKassa({
+const yooKassa = new Yookassa({
     shopId: '<Идентификатор магазина>',
     secretKey: '<Секретный ключ>'
 });
