@@ -1,3 +1,8 @@
+export enum LocaleEnum {
+	ru_RU = 'ru_RU',
+	en_US = 'en_US',
+}
+
 export enum CurrencyEnum {
 	USD = 'USD',
 	CAD = 'CAD',
@@ -119,3 +124,11 @@ export enum CurrencyEnum {
 	ZMK = 'ZMK',
 	ZWL = 'ZWL',
 }
+
+export interface IAmount {
+	/** В формате: 10.00 */
+	value: string
+	/** Трехбуквенный код валюты в формате ISO-4217. Пример: RUB. Должен соответствовать валюте субаккаунта (recipient.gateway_id), если вы разделяете потоки платежей, и валюте аккаунта (shopId в личном кабинете), если не разделяете. */
+	currency: CurrencyEnum
+}
+

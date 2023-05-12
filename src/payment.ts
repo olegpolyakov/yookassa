@@ -1,21 +1,9 @@
-export enum PaymentStatusEnum {
-	// Платеж создан, но не завершен
-	PENDING = 'pending',
-
-	// Платеж завершен и ожидает ваших действий
-	WAITING_FOR_CAPTURE = 'waiting_for_capture',
-
-	// Платеж успешно завершен, деньги придут на ваш расчетный счет
-	SUCCEEDED = 'succeeded',
-
-	// Платеж отменен
-	CANCELED = 'canceled',
-}
+import { IPayment, PaymentStatusEnum } from './types/Payment'
 
 export class Payment {
-	private status: PaymentStatusEnum = null
-	constructor(instance, data) {
-		Object.assign(this, data, { _instance: instance })
+	_instance: IPayment
+	constructor(data?: IPayment) {
+		this._instance = data
 	}
 
 	/**
@@ -24,7 +12,7 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isPending() {
-		return this.status === PaymentStatusEnum.PENDING
+		return this._instance.status === PaymentStatusEnum.PENDING
 	}
 
 	/**
@@ -33,7 +21,7 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isWaitingForCapture() {
-		return this.status === PaymentStatusEnum.WAITING_FOR_CAPTURE
+		return this._instance.status === PaymentStatusEnum.WAITING_FOR_CAPTURE
 	}
 
 	/**
@@ -42,7 +30,7 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isSucceeded() {
-		return this.status === PaymentStatusEnum.SUCCEEDED
+		return this._instance.status === PaymentStatusEnum.SUCCEEDED
 	}
 
 	/**
@@ -51,7 +39,7 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isCanceled() {
-		return this.status === PaymentStatusEnum.CANCELED
+		return this._instance.status === PaymentStatusEnum.CANCELED
 	}
 
 	/**
@@ -60,11 +48,16 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isResolved() {
-		return this.status === PaymentStatusEnum.SUCCEEDED || this.status === PaymentStatusEnum.CANCELED
+		return (
+			this._instance.status === PaymentStatusEnum.SUCCEEDED ||
+			this._instance.status === PaymentStatusEnum.CANCELED
+		)
 	}
 
 	get confirmationUrl() {
-		return this.confirmation ? this.confirmation.confirmation_url : undefined
+		return this._instance.confirmation
+			? this._instance.confirmation.confirmation_url
+			: undefined
 	}
 
 	/**

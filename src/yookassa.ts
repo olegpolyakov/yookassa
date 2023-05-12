@@ -1,14 +1,14 @@
 import request from 'axios'
 import { v4 as uuid } from 'uuid'
 import { Payment } from './payment'
-import { Refund } from './refund'
-import { PaymentError } from './payment-error'
-import { delay } from './utils'
+import { ICreatePaymentRequest, IPayment } from './types/Payment'
 
 const DEFAULT_URL = 'https://api.yookassa.ru/v3/'
 const DEFAULT_DEBUG = false
-const DEFAULT_TIMEOUT = 120000 // 2 minutes (Node's default timeout)
-const DEFAULT_DELAY = 60000 // 1 minute
+/** 2 minutes (Node's default timeout) */
+const DEFAULT_TIMEOUT = 120000
+/** 1 minute */
+const DEFAULT_DELAY = 60000
 
 export class YooKassa {
 	private shopId: string
@@ -18,15 +18,6 @@ export class YooKassa {
 	private timeout = DEFAULT_TIMEOUT
 	private retryDelay = DEFAULT_DELAY
 
-	/**
-	 * @param {string} shopId
-	 * @param {string} secretKey
-	 * @param {string} apiUrl
-	 * @param {string} debug
-	 * @param {string} timeout
-	 * @param {string} retryDelay
-	 * @returns {YooKassa}
-	 */
 	constructor({
 		shopId,
 		secretKey,
@@ -46,16 +37,18 @@ export class YooKassa {
 	/**
 	 * Create a payment
 	 * @see https://yookassa.ru/developers/api#create_payment
-	 * @param {Object} payload
+	 * @param {ICreatePaymentRequest} payload
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	createPayment(payload, idempotenceKey) {
-		return this.request('POST', 'payments', payload, idempotenceKey).then(
-			(data) => {
-				return new Payment(this, data)
-			},
+	async createPayment(payload: ICreatePaymentRequest, idempotenceKey: string) {
+		const response = await this.request<IPayment>(
+			'POST',
+			'payments',
+			payload,
+			idempotenceKey,
 		)
+		return new Payment(response)
 	}
 
 	/**
@@ -65,15 +58,14 @@ export class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	getPayment(paymentId, idempotenceKey) {
-		return this.request(
+	async getPayment(paymentId, idempotenceKey) {
+		const response = await this.request<IPayment>(
 			'GET',
 			`payments/${paymentId}`,
-			{},
+			null,
 			idempotenceKey,
-		).then((data) => {
-			return new Payment(this, data)
-		})
+		)
+		return new Payment(response)
 	}
 
 	/**
@@ -85,7 +77,7 @@ export class YooKassa {
 	 * @returns {Promise<Payment>}
 	 */
 	capturePayment(paymentId, amount, idempotenceKey) {
-		return this.request(
+		return this.request<IPayment>(
 			'POST',
 			`payments/${paymentId}/capture`,
 			{ amount },
@@ -106,7 +98,7 @@ export class YooKassa {
 		return this.request(
 			'POST',
 			`payments/${paymentId}/cancel`,
-			{},
+			null,
 			idempotenceKey,
 		).then((data) => {
 			return new Payment(this, data)
@@ -147,15 +139,17 @@ export class YooKassa {
 		)
 	}
 
-	request(method, path, payload, idempotenceKey) {
+	async request<T>(
+		method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT',
+		path: string,
+		payload?: ICreatePaymentRequest,
+		idempotenceKey?: string,
+	): Promise<T> {
 		/**
 		 * Generate idempotence key if not present
 		 * @see https://yookassa.ru/developers/using-api/basics#idempotence
 		 */
-		if (!idempotenceKey) {
-			idempotenceKey = uuid()
-		}
-
+		idempotenceKey = idempotenceKey || uuid()
 		const uri = this.apiUrl + path
 
 		if (this.debug) {
@@ -163,63 +157,22 @@ export class YooKassa {
 			console.log(`${method}: ${uri}`)
 		}
 
-		return new Promise((resolve, reject) => {
-			request(
-				{
-					method,
-					uri,
-					json: true,
-					body: payload,
-					timeout: this.timeout,
-					/**
-					 * @see https://yookassa.ru/developers/using-api/basics#auth
-					 */
-					auth: {
-						user: this.shopId,
-						pass: this.secretKey,
-					},
-					resolveWithFullResponse: true,
-					headers: {
-						/**
-						 * @see https://yookassa.ru/developers/using-api/basics#idempotence
-						 */
-						'Idempotence-Key': idempotenceKey,
-					},
-				},
-				function (error, response, body) {
-					if (error) return reject(error)
-
-					if (response.body.type === 'error') {
-						return reject(response.body)
-					}
-
-					resolve(response)
-				},
-			)
-		})
-			.then((response) => {
-				switch (response.statusCode) {
-					/**
-					 * Retry request
-					 * @see https://yookassa.ru/developers/using-api/basics#sync
-					 */
-					case 202:
-						return delay(response.body.retry_after || this.retryDelay).then(
-							this.request.bind(this, method, path, payload, idempotenceKey),
-						)
-
-					/**
-					 * Normal response
-					 */
-					default:
-						return response.body
-				}
-			})
-			.catch((error) => {
+		const response = await request<IPayment>({
+			method,
+			url: uri,
+			timeout: this.timeout,
+			data: payload,
+			auth: {
+				username: this.shopId,
+				password: this.secretKey,
+			},
+			headers: {
 				/**
-				 * @see https://yookassa.ru/developers/using-api/basics#http-codes
+				 * @see https://yookassa.ru/developers/using-api/basics#idempotence
 				 */
-				return Promise.reject(new PaymentError(error))
-			})
+				'Idempotence-Key': idempotenceKey,
+			},
+		})
+		return response.data
 	}
 }

@@ -1,2 +1,8 @@
 node_modules
 .npmignore
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/jsLibraryMappings.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
