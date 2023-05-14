@@ -1,9 +1,36 @@
-import { IPayment, PaymentStatusEnum } from './types/Payment'
+import {
+	ConfirmationTypesEnum,
+	IConfirmation,
+	IPayment,
+	PaymentStatusEnum,
+} from './types/Payment'
+import { IAmount } from './types/Common'
+import { IPaymentMethod } from './types/PaymentMethod'
+import { ReceiptRegistrationEnum } from './types/Receipt'
+import YooKassa from './yookassa'
 
-export class Payment {
-	_instance: IPayment
-	constructor(data?: IPayment) {
-		this._instance = data
+export default class Payment implements IPayment {
+	_instance: YooKassa
+	amount: IAmount
+	captured_at: string
+	confirmation: IConfirmation
+	created_at: string
+	description: string
+	expires_at: string
+	id: string
+	income_amount: IAmount
+	metadata: object
+	paid: boolean
+	payment_method: IPaymentMethod
+	receipt_registration: ReceiptRegistrationEnum
+	recipient: { account_id: string; gateway_id: string }
+	refundable: boolean
+	refunded_amount: IAmount
+	status: PaymentStatusEnum
+	test: boolean
+
+	constructor(instance, data) {
+		Object.assign(this, data, { _instance: instance })
 	}
 
 	/**
@@ -12,7 +39,7 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isPending() {
-		return this._instance.status === PaymentStatusEnum.PENDING
+		return this.status === PaymentStatusEnum.PENDING
 	}
 
 	/**
@@ -21,7 +48,7 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isWaitingForCapture() {
-		return this._instance.status === PaymentStatusEnum.WAITING_FOR_CAPTURE
+		return this.status === PaymentStatusEnum.WAITING_FOR_CAPTURE
 	}
 
 	/**
@@ -30,7 +57,7 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isSucceeded() {
-		return this._instance.status === PaymentStatusEnum.SUCCEEDED
+		return this.status === PaymentStatusEnum.SUCCEEDED
 	}
 
 	/**
@@ -39,7 +66,7 @@ export class Payment {
 	 * @returns {Boolean}
 	 */
 	get isCanceled() {
-		return this._instance.status === PaymentStatusEnum.CANCELED
+		return this.status === PaymentStatusEnum.CANCELED
 	}
 
 	/**
@@ -49,14 +76,15 @@ export class Payment {
 	 */
 	get isResolved() {
 		return (
-			this._instance.status === PaymentStatusEnum.SUCCEEDED ||
-			this._instance.status === PaymentStatusEnum.CANCELED
+			this.status === PaymentStatusEnum.SUCCEEDED ||
+			this.status === PaymentStatusEnum.CANCELED
 		)
 	}
 
 	get confirmationUrl() {
-		return this._instance.confirmation
-			? this._instance.confirmation.confirmation_url
+		return this.confirmation &&
+			this.confirmation.type === ConfirmationTypesEnum.redirect
+			? this.confirmation.confirmation_url
 			: undefined
 	}
 

@@ -1,4 +1,8 @@
-export class Refund {
+import YooKassa from './yookassa'
+
+export default class Refund {
+	_instance: YooKassa
+	id: string
 	constructor(instance, data) {
 		Object.assign(this, data, { _instance: instance })
 	}
@@ -10,5 +14,3 @@ export class Refund {
 		})
 	}
 }
-
-module.exports = Refund

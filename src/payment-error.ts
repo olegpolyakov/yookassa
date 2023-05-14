@@ -1,4 +1,4 @@
-export class PaymentError extends Error {
+export default class PaymentError extends Error {
 	private parameter: any
 	constructor(error: Error) {
 		super(error.message)

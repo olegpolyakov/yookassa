@@ -1,7 +1,6 @@
-
-import { IPaymentMethod, PaymentMethodsEnum } from './PaymentMethod'
+import { IPaymentMethod } from './PaymentMethod'
 import { IReceipt, ReceiptRegistrationEnum } from './Receipt'
-import { CurrencyEnum, IAmount, LocaleEnum } from './Common'
+import { IAmount, LocaleEnum } from './Common'
 
 export enum PaymentStatusEnum {
 	/** Платеж создан, но не завершен */
@@ -64,6 +63,8 @@ export enum ConfirmationTypesEnum {
 export interface IConfirmationRedirect {
 	/** Код сценария подтверждения. */
 	type: 'redirect'
+	/** URL, на который необходимо перенаправить пользователя для подтверждения оплаты. */
+	confirmation_url: string
 	/** Запрос на проведение платежа с аутентификацией по 3-D Secure. Будет работать, если оплату банковской картой вы по умолчанию принимаете без подтверждения платежа пользователем. В остальных случаях аутентификацией по 3-D Secure будет управлять ЮKassa. Если хотите принимать платежи без дополнительного подтверждения пользователем, напишите вашему менеджеру ЮKassa. */
 	enforce?: boolean
 	/** Язык интерфейса, писем и смс, которые будет видеть или получать пользователь. Формат соответствует ISO/IEC 15897. Возможные значения: ru_RU, en_US. Регистр важен. */
@@ -74,22 +75,25 @@ export interface IConfirmationRedirect {
 
 export interface IConfirmationEmbedded {
 	/** Код сценария подтверждения. */
-	type: 'embedded'
+	type: ConfirmationTypesEnum.embedded
 	/** Язык интерфейса, писем и смс, которые будет видеть или получать пользователь. Формат соответствует ISO/IEC 15897. Возможные значения: ru_RU, en_US. Регистр важен. */
 	locale?: LocaleEnum
 }
 
 export interface IConfirmationQR {
+	type: ConfirmationTypesEnum.qr
 	//TODO: Добавить типы для QR-код
 	any: unknown
 }
 
 export interface IConfirmationExternal {
+	type: ConfirmationTypesEnum.external
 	//TODO: Добавить типы для External
 	any: unknown
 }
 
 export interface IConfirmationMobileApp {
+	type: ConfirmationTypesEnum.mobile_application
 	//TODO: Добавить типы для MobileApplication
 	any: unknown
 }
@@ -100,19 +104,9 @@ export interface IPayment {
 	/** Статус платежа. Возможные значения: pending, waiting_for_capture, succeeded и canceled.  */
 	status: PaymentStatusEnum
 	/** Сумма платежа. Иногда партнеры ЮKassa берут с пользователя дополнительную комиссию, которая не входит в эту сумму. */
-	amount: {
-		/** Сумма в выбранной валюте. Выражается в виде строки и пишется через точку, например 10.00. Количество знаков после точки зависит от выбранной валюты. */
-		value: string
-		/** Трехбуквенный код валюты в формате ISO-4217. Пример: RUB. Должен соответствовать валюте субаккаунта (recipient.gateway_id), если вы разделяете потоки платежей, и валюте аккаунта (shopId в личном кабинете), если не разделяете. */
-		currency: CurrencyEnum
-	}
+	amount: IAmount
 	/** Сумма платежа, которую получит магазин, — значение amount за вычетом комиссии ЮKassa. Если вы партнер  и для аутентификации запросов используете OAuth-токен, запросит */
-	income_amount?: {
-		/** Сумма в выбранной валюте. Выражается в виде строки и пишется через точку, например 10.00. Количество знаков после точки зависит от выбранной валюты. */
-		value: string
-		/** Трехбуквенный код валюты в формате ISO-4217. Пример: RUB. Должен соответствовать валюте субаккаунта (recipient.gateway_id), если вы разделяете потоки платежей, и валюте аккаунта (shopId в личном кабинете), если не разделяете. */
-		currency: CurrencyEnum
-	}
+	income_amount?: IAmount
 	/** Описание транзакции (не более 128 символов), которое вы увидите в личном кабинете ЮKassa, а пользователь — при оплате. Например: «Оплата заказа № 72 для user@yoomoney.ru». */
 	description?: string
 	/** Получатель платежа. */
@@ -123,21 +117,7 @@ export interface IPayment {
 		gateway_id: string
 	}
 	/** Способ оплаты , который был использован для этого платежа. */
-	payment_method?: {
-		/** Код способа оплаты. */
-		type: PaymentMethodsEnum
-		/** Идентификатор способа оплаты. */
-		id: string
-		/** С помощью сохраненного способа оплаты можно проводить безакцептные списания . */
-		saved: boolean
-		/** Название способа оплаты. */
-		title?: string
-		/** Логин пользователя в Альфа-Клике (привязанный телефон или дополнительный логин). */
-		login?: string
-		/** Данные банковской карты. */
-		card?: object
-		other?
-	}
+	payment_method?: IPaymentMethod
 	/** Время подтверждения платежа. Указывается по UTC и передается в формате ISO 8601. */
 	captured_at?: string
 	/** Время создания заказа. Указывается по UTC и передается в формате ISO 8601. Пример: 2017-11-03T11:52:31.827Z*/
@@ -149,12 +129,7 @@ export interface IPayment {
 	/** Признак тестовой операции. */
 	test: boolean
 	/** Сумма, которая вернулась пользователю. Присутствует, если у этого платежа есть успешные возвраты. */
-	refunded_amount?: {
-		/** Сумма в выбранной валюте. Выражается в виде строки и пишется через точку, например 10.00. Количество знаков после точки зависит от выбранной валюты. */
-		value: string
-		/** Трехбуквенный код валюты в формате ISO-4217. Пример: RUB. Должен соответствовать валюте субаккаунта (recipient.gateway_id), если вы разделяете потоки платежей, и валюте аккаунта (shopId в личном кабинете), если не разделяете. */
-		currency: CurrencyEnum
-	}
+	refunded_amount?: IAmount
 	/** Признак оплаты заказа. */
 	paid: boolean
 	/** Возможность провести возврат по API. */

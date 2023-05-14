@@ -1,23 +1,32 @@
 import request from 'axios'
 import { v4 as uuid } from 'uuid'
-import { Payment } from './payment'
-import { ICreatePaymentRequest, IPayment } from './types/Payment'
+import Payment from './payment'
+import Refund from './refund'
+import PaymentError from './payment-error'
+import * as utils from './utils'
 
 const DEFAULT_URL = 'https://api.yookassa.ru/v3/'
 const DEFAULT_DEBUG = false
-/** 2 minutes (Node's default timeout) */
-const DEFAULT_TIMEOUT = 120000
-/** 1 minute */
-const DEFAULT_DELAY = 60000
+const DEFAULT_TIMEOUT = 120000 // 2 minutes (Node's default timeout)
+const DEFAULT_DELAY = 60000 // 1 minute
 
-export class YooKassa {
-	private shopId: string
-	private secretKey: string
-	private apiUrl = DEFAULT_URL
-	private debug = DEFAULT_DEBUG
-	private timeout = DEFAULT_TIMEOUT
-	private retryDelay = DEFAULT_DELAY
+export default class YooKassa {
+	shopId: string
+	secretKey: string
+	apiUrl: string
+	debug: boolean
+	timeout: number
+	retryDelay: number
 
+	/**
+	 * @param {string} shopId
+	 * @param {string} secretKey
+	 * @param {string} apiUrl
+	 * @param {string} debug
+	 * @param {string} timeout
+	 * @param {string} retryDelay
+	 * @returns {YooKassa}
+	 */
 	constructor({
 		shopId,
 		secretKey,
@@ -37,18 +46,16 @@ export class YooKassa {
 	/**
 	 * Create a payment
 	 * @see https://yookassa.ru/developers/api#create_payment
-	 * @param {ICreatePaymentRequest} payload
+	 * @param {Object} payload
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	async createPayment(payload: ICreatePaymentRequest, idempotenceKey: string) {
-		const response = await this.request<IPayment>(
-			'POST',
-			'payments',
-			payload,
-			idempotenceKey,
+	createPayment(payload, idempotenceKey) {
+		return this.request('POST', 'payments', payload, idempotenceKey).then(
+			(data) => {
+				return new Payment(this, data)
+			},
 		)
-		return new Payment(response)
 	}
 
 	/**
@@ -58,14 +65,15 @@ export class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	async getPayment(paymentId, idempotenceKey) {
-		const response = await this.request<IPayment>(
+	getPayment(paymentId, idempotenceKey = null) {
+		return this.request(
 			'GET',
 			`payments/${paymentId}`,
-			null,
+			{},
 			idempotenceKey,
-		)
-		return new Payment(response)
+		).then((data) => {
+			return new Payment(this, data)
+		})
 	}
 
 	/**
@@ -76,8 +84,8 @@ export class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	capturePayment(paymentId, amount, idempotenceKey) {
-		return this.request<IPayment>(
+	capturePayment(paymentId, amount, idempotenceKey = null) {
+		return this.request(
 			'POST',
 			`payments/${paymentId}/capture`,
 			{ amount },
@@ -94,11 +102,11 @@ export class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	cancelPayment(paymentId, idempotenceKey) {
+	cancelPayment(paymentId, idempotenceKey = null) {
 		return this.request(
 			'POST',
 			`payments/${paymentId}/cancel`,
-			null,
+			{},
 			idempotenceKey,
 		).then((data) => {
 			return new Payment(this, data)
@@ -113,7 +121,7 @@ export class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Refund>}
 	 */
-	createRefund(paymentId, amount, idempotenceKey) {
+	createRefund(paymentId, amount, idempotenceKey = null) {
 		return this.request(
 			'POST',
 			'refunds',
@@ -131,7 +139,7 @@ export class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Refund>}
 	 */
-	getRefund(refundId, idempotenceKey) {
+	getRefund(refundId, idempotenceKey = null) {
 		return this.request('GET', `refunds/${refundId}`, {}, idempotenceKey).then(
 			(data) => {
 				return new Refund(this, data)
@@ -139,17 +147,15 @@ export class YooKassa {
 		)
 	}
 
-	async request<T>(
-		method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT',
-		path: string,
-		payload?: ICreatePaymentRequest,
-		idempotenceKey?: string,
-	): Promise<T> {
+	request(method, path, payload, idempotenceKey = null) {
 		/**
 		 * Generate idempotence key if not present
 		 * @see https://yookassa.ru/developers/using-api/basics#idempotence
 		 */
-		idempotenceKey = idempotenceKey || uuid()
+		if (!idempotenceKey) {
+			idempotenceKey = uuid()
+		}
+
 		const uri = this.apiUrl + path
 
 		if (this.debug) {
@@ -157,22 +163,44 @@ export class YooKassa {
 			console.log(`${method}: ${uri}`)
 		}
 
-		const response = await request<IPayment>({
+		return request({
 			method,
 			url: uri,
-			timeout: this.timeout,
 			data: payload,
+			timeout: this.timeout,
 			auth: {
 				username: this.shopId,
 				password: this.secretKey,
 			},
 			headers: {
-				/**
-				 * @see https://yookassa.ru/developers/using-api/basics#idempotence
-				 */
 				'Idempotence-Key': idempotenceKey,
 			},
 		})
-		return response.data
+			.then((response) => {
+				switch (response.status) {
+					/**
+					 * Retry request
+					 * @see https://yookassa.ru/developers/using-api/basics#sync
+					 */
+					case 202:
+						return utils
+							.delay(response.data.retry_after || this.retryDelay)
+							.then(
+								this.request.bind(this, method, path, payload, idempotenceKey),
+							)
+
+					/**
+					 * Normal response
+					 */
+					default:
+						return response.data
+				}
+			})
+			.catch((error) => {
+				/**
+				 * @see https://yookassa.ru/developers/using-api/basics#http-codes
+				 */
+				return Promise.reject(new PaymentError(error))
+			})
 	}
 }
