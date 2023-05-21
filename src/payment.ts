@@ -29,7 +29,7 @@ export default class Payment implements IPayment {
 	status: PaymentStatusEnum
 	test: boolean
 
-	constructor(instance, data) {
+	constructor(instance: YooKassa, data: Payment) {
 		Object.assign(this, data, { _instance: instance })
 	}
 
@@ -90,7 +90,7 @@ export default class Payment implements IPayment {
 
 	/**
 	 * Retrieve payment info
-	 * @returns {Promise<bool>}
+	 * @returns {Promise<boolean>}
 	 */
 	reload() {
 		return this._instance.getPayment(this.id).then((data) => {
@@ -104,7 +104,7 @@ export default class Payment implements IPayment {
 	 * @param amount
 	 * @returns {*}
 	 */
-	capture(amount) {
+	capture(amount: number) {
 		return this._instance
 			.capturePayment(this.id, amount || this.amount)
 			.then((data) => {
@@ -129,7 +129,7 @@ export default class Payment implements IPayment {
 	 * @param amount
 	 * @returns {*|Promise.<Refund>}
 	 */
-	refund(amount) {
+	refund(amount: number) {
 		return this._instance.createRefund(this.id, amount || this.amount)
 	}
 }

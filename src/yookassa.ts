@@ -4,6 +4,7 @@ import Payment from './payment'
 import Refund from './refund'
 import PaymentError from './payment-error'
 import * as utils from './utils'
+import { ICreatePaymentRequest } from './types/Payment'
 
 const DEFAULT_URL = 'https://api.yookassa.ru/v3/'
 const DEFAULT_DEBUG = false
@@ -50,12 +51,15 @@ export default class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	createPayment(payload, idempotenceKey) {
-		return this.request('POST', 'payments', payload, idempotenceKey).then(
-			(data) => {
-				return new Payment(this, data)
-			},
-		)
+	createPayment(payload: ICreatePaymentRequest, idempotenceKey: string) {
+		return this.request<Payment>(
+			'POST',
+			'payments',
+			payload,
+			idempotenceKey,
+		).then((data) => {
+			return new Payment(this, data)
+		})
 	}
 
 	/**
@@ -65,8 +69,8 @@ export default class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	getPayment(paymentId, idempotenceKey = null) {
-		return this.request(
+	getPayment(paymentId: string, idempotenceKey: string = null) {
+		return this.request<Payment>(
 			'GET',
 			`payments/${paymentId}`,
 			{},
@@ -84,8 +88,12 @@ export default class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	capturePayment(paymentId, amount, idempotenceKey = null) {
-		return this.request(
+	capturePayment(
+		paymentId: string,
+		amount: number,
+		idempotenceKey: string = null,
+	) {
+		return this.request<Payment>(
 			'POST',
 			`payments/${paymentId}/capture`,
 			{ amount },
@@ -102,13 +110,13 @@ export default class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	cancelPayment(paymentId, idempotenceKey = null) {
-		return this.request(
+	cancelPayment(paymentId: string, idempotenceKey: string = null) {
+		return this.request<Payment>(
 			'POST',
 			`payments/${paymentId}/cancel`,
 			{},
 			idempotenceKey,
-		).then((data) => {
+		).then((data: Payment) => {
 			return new Payment(this, data)
 		})
 	}
@@ -122,7 +130,7 @@ export default class YooKassa {
 	 * @returns {Promise<Refund>}
 	 */
 	createRefund(paymentId, amount, idempotenceKey = null) {
-		return this.request(
+		return this.request<Payment>(
 			'POST',
 			'refunds',
 			{ payment_id: paymentId, amount },
@@ -140,14 +148,17 @@ export default class YooKassa {
 	 * @returns {Promise<Refund>}
 	 */
 	getRefund(refundId, idempotenceKey = null) {
-		return this.request('GET', `refunds/${refundId}`, {}, idempotenceKey).then(
-			(data) => {
-				return new Refund(this, data)
-			},
-		)
+		return this.request<Refund>(
+			'GET',
+			`refunds/${refundId}`,
+			{},
+			idempotenceKey,
+		).then((data) => {
+			return new Refund(this, data)
+		})
 	}
 
-	request(method, path, payload, idempotenceKey = null) {
+	request<T>(method, path, payload, idempotenceKey = null): Promise<T> {
 		/**
 		 * Generate idempotence key if not present
 		 * @see https://yookassa.ru/developers/using-api/basics#idempotence

@@ -1,4 +1,4 @@
-# Yookassa Typescript API для Node.js
+# Yookassa API для Node.js
 
 Клиент для работы с платежами по API Yookassa. Подходит тем, у кого способ подключения называется API.
 
@@ -82,3 +82,20 @@ const payment = await yooKassa.createPayment({
 | Название  | Аргументы | Описание                       |
 | ---       | ---       | ---                            |
 | `reload`  |           | Получить информацию о возврате |
+
+## История версий
+```
+{{#each releases}}{{title}} @ {{niceDate}}{{#commits}}  
+  - {{subject}}{{/commits}}
+
+{{/each}}
+```
+
+## Контакты
+
+Почта: [dev@its.bz](mailto:dev@its.bz)\
+Сайт: [its.bz](https://its.bz)
+
+## Лицензия
+
+MIT
