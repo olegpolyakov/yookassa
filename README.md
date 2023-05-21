@@ -82,15 +82,21 @@ description: "Заказ №72"
 
 ## История версий
 ```
+0.1.3 @ 21 May 2023  
+- Fix publish  
+- Fix Amount types  
+- Add new build  
+- Upgrade app version
+
 0.1.2 @ 21 May 2023  
 - Initial commit  
 - Restore original logics with injected typings  
 - WIP: Add almost all of used types, enums and annotations  
 - Initial commit  
 - Fix typings in main module, add publish script and changelog  
+- Fix publish script  
 - Update Readme  
 - Refactor YooKassa class  
-- Upgrade app version  
 - Fix version  
 - Upgrade app version  
 - Fix publish script  
