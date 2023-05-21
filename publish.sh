@@ -2,7 +2,7 @@
 
 git switch master || exit 1
 yarn itsbz-onever inc patch
-ver=$(node index.js get --machine)
+ver=$(yarn itsbz-onever get --machine)
 git checkout .onever.json
 yarn itsbz-onever set "$ver" && yarn itsbz-onever apply
 git add ./.onever.json ./package.json
