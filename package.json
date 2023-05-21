@@ -6,8 +6,10 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --fix --no-eslintrc --config ./.eslintrc.js --report-unused-disable-directives --format codeframe --ext js,ts,vue .",
     "pub": "sh publish.sh",
-    "changelog": "yarn auto-changelog"
+    "changelog": "yarn auto-changelog",
+    "print-version": "node -p \"'v' +require('./package.json').version\""
   },
   "dependencies": {
     "axios": "^1.4.0",
@@ -20,6 +22,7 @@
     "auto-changelog": "^2.4.0",
     "eslint": "8.39.0",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-formatter-codeframe": "^7.32.1",
     "eslint-plugin-prettier": "^4.2.1",
     "itsbz-onever": "^1.0.15",
     "lint-staged": "^13.2.2",

@@ -176,7 +176,6 @@ export default class YooKassa {
 		const uri = this.apiUrl + path
 
 		if (this.debug) {
-			// eslint-disable-next-line no-console
 			console.log(`${method}: ${uri}`)
 		}
 
