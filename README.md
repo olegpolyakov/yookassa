@@ -82,6 +82,10 @@ description: "Заказ №72"
 
 ## История версий
 ```
+0.1.4 @ 22 May 2023  
+- Fix bank_card structure  
+- Upgrade app version
+
 0.1.3 @ 21 May 2023  
 - Fix publish  
 - Fix Amount types  
