@@ -52,7 +52,7 @@ export default class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Payment>}
 	 */
-	createPayment(payload: ICreatePaymentRequest, idempotenceKey: string) {
+	createPayment(payload: ICreatePaymentRequest, idempotenceKey: string = null) {
 		return this.request<Payment>(
 			'POST',
 			'payments',
