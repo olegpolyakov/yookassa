@@ -7,7 +7,7 @@ git checkout .onever.json
 yarn itsbz-onever set "$ver" && yarn itsbz-onever apply
 git add ./.onever.json ./package.json
 yarn build
-git add ./lib/**/*
+git add ./lib
 git commit -m "Upgrade app version to ${ver}"
 git tag "$ver"
 yarn changelog
