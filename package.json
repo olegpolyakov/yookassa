@@ -1,6 +1,6 @@
 {
   "name": "yookassa-ts",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "YooKassa TypeScript API for Node.js",
   "main": "lib/index.js",
   "scripts": {
