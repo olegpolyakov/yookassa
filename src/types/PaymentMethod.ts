@@ -56,16 +56,16 @@ export interface IPaymentMethodCard {
 	/** Данные банковской карты (необходимы, если вы собираете данные карты пользователей на своей стороне). */
 	card?: {
 		/** Номер банковской карты. */
+		number: string
+		/** Срок действия, год, YYYY. */
+		expiry_year?: string
+		/** Срок действия, месяц, MM. */
+		expiry_month: string
+		/** Код CVC2 или CVV2, 3 или 4 символа, печатается на обратной стороне карты. */
+		csc?: string
+		/** Имя владельца карты. */
+		cardholder?: string
 	}
-	number: string
-	/** Срок действия, год, YYYY. */
-	expiry_year: string
-	/** Срок действия, месяц, MM. */
-	expiry_month: string
-	/** Код CVC2 или CVV2, 3 или 4 символа, печатается на обратной стороне карты. */
-	csc?: string
-	/** Имя владельца карты. */
-	cardholder?: string
 }
 
 /** Баланс телефона */
