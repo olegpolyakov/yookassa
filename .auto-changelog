@@ -1,0 +1,15 @@
+{
+    "output": "README.md",
+    "template": "changelog-template.md",
+    "unreleased": false,
+    "release-summary": false,
+    "commitLimit": false,
+    "replaceText": {
+      "(^\\+)(.*)": "$2",
+      "(^feature/)(.*)": "$2",
+      "(^fix/)(.*)": "$2"
+    },
+    "includeBranch": [
+      "master"
+    ]
+}

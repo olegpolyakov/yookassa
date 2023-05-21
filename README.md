@@ -1,4 +1,4 @@
-# Yookassa Typescript API для Node.js
+# Yookassa API для Node.js
 
 Клиент для работы с платежами по API Yookassa. Подходит тем, у кого способ подключения называется API.
 
@@ -19,23 +19,23 @@ npm i yookassa
 const Yookassa = require('yookassa');
 
 const yooKassa = new Yookassa({
-    shopId: '<Идентификатор магазина>',
-    secretKey: '<Секретный ключ>'
+shopId: '<Идентификатор магазина>',
+secretKey: '<Секретный ключ>'
 });
 
 const payment = await yooKassa.createPayment({
-    amount: {
-      value: "2.00",
-      currency: "RUB"
-    },
-    payment_method_data: {
-        type: "bank_card"
-    },
-    confirmation: {
-      type: "redirect",
-      return_url: "https://www.merchant-website.com/return_url"
-    },
-    description: "Заказ №72"
+amount: {
+value: "2.00",
+currency: "RUB"
+},
+payment_method_data: {
+type: "bank_card"
+},
+confirmation: {
+type: "redirect",
+return_url: "https://www.merchant-website.com/return_url"
+},
+description: "Заказ №72"
 });
 ```
 
@@ -50,7 +50,6 @@ const payment = await yooKassa.createPayment({
 | `createRefund`   | [Создание возврата](https://yookassa.ru/developers/api#create_refund)       |
 | `getRefund`      | [Информация о возврате](https://yookassa.ru/developers/api#get_refund)      |
 
-
 ## API платежа
 
 ### Свойства
@@ -64,7 +63,6 @@ const payment = await yooKassa.createPayment({
 | `isResolved`          | Равен ли статус платежа `succeeded` или `canceled` |
 | `confirmationUrl`     | URL для подтверждения                              |
 
-
 ### Методы
 
 | Название  | Аргументы | Описание                      |
@@ -74,7 +72,6 @@ const payment = await yooKassa.createPayment({
 | `cancel`  |           | Отменить платеж               |
 | `refund`  | amount    | Вернуть платеж                |
 
-
 ## API возврата
 
 ### Методы
@@ -82,3 +79,32 @@ const payment = await yooKassa.createPayment({
 | Название  | Аргументы | Описание                       |
 | ---       | ---       | ---                            |
 | `reload`  |           | Получить информацию о возврате |
+
+## История версий
+```
+0.1.2 @ 21 May 2023  
+- Initial commit  
+- Restore original logics with injected typings  
+- WIP: Add almost all of used types, enums and annotations  
+- Initial commit  
+- Fix typings in main module, add publish script and changelog  
+- Update Readme  
+- Refactor YooKassa class  
+- Upgrade app version  
+- Fix version  
+- Upgrade app version  
+- Fix publish script  
+- Fix publish script  
+- Update version  
+- Update README.md
+
+```
+
+## Контакты
+
+Почта: [dev@its.bz](mailto:dev@its.bz)\
+Сайт: [its.bz](https://its.bz)
+
+## Лицензия
+
+MIT
