@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 git switch master || exit 1
+yarn build
+git add lib/**/*
+git commit --amend --no-edit
 yarn itsbz-onever inc patch
 ver=$(yarn -s itsbz-onever get --machine)
 git checkout .onever.json

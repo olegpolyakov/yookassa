@@ -15,12 +15,13 @@ export declare enum PaymentMethodsEnum {
 }
 export interface IPaymentMethodCard {
     type: PaymentMethodsEnum.bank_card;
-    card?: {};
-    number: string;
-    expiry_year: string;
-    expiry_month: string;
-    csc?: string;
-    cardholder?: string;
+    card?: {
+        number: string;
+        expiry_year?: string;
+        expiry_month: string;
+        csc?: string;
+        cardholder?: string;
+    };
 }
 export interface IPaymentMethodMobileBalance {
     type: PaymentMethodsEnum.mobile_balance;
