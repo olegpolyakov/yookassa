@@ -12,7 +12,7 @@ git commit -m "Upgrade app version to ${ver}"
 git tag "$ver"
 yarn changelog
 git add --ignore-errors -A -f -- README.md
-git commit --amend --no-edit
+git commit -m "Release version ${ver}"
 git tag -d "$ver"
 git tag "$ver"
 git push origin master --progress --tags
