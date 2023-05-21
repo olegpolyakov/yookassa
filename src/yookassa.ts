@@ -5,6 +5,7 @@ import Refund from './refund'
 import PaymentError from './payment-error'
 import * as utils from './utils'
 import { ICreatePaymentRequest } from './types/Payment'
+import { IAmount } from './types/Common'
 
 const DEFAULT_URL = 'https://api.yookassa.ru/v3/'
 const DEFAULT_DEBUG = false
@@ -90,7 +91,7 @@ export default class YooKassa {
 	 */
 	capturePayment(
 		paymentId: string,
-		amount: number,
+		amount: IAmount,
 		idempotenceKey: string = null,
 	) {
 		return this.request<Payment>(
@@ -129,7 +130,7 @@ export default class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Refund>}
 	 */
-	createRefund(paymentId, amount, idempotenceKey = null) {
+	createRefund(paymentId: string, amount: IAmount, idempotenceKey = null) {
 		return this.request<Payment>(
 			'POST',
 			'refunds',
@@ -147,7 +148,7 @@ export default class YooKassa {
 	 * @param {string} idempotenceKey
 	 * @returns {Promise<Refund>}
 	 */
-	getRefund(refundId, idempotenceKey = null) {
+	getRefund(refundId: string, idempotenceKey: string = null) {
 		return this.request<Refund>(
 			'GET',
 			`refunds/${refundId}`,
@@ -158,7 +159,12 @@ export default class YooKassa {
 		})
 	}
 
-	request<T>(method, path, payload, idempotenceKey = null): Promise<T> {
+	request<T>(
+		method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD',
+		path: string,
+		payload: unknown,
+		idempotenceKey: string = null,
+	): Promise<T> {
 		/**
 		 * Generate idempotence key if not present
 		 * @see https://yookassa.ru/developers/using-api/basics#idempotence

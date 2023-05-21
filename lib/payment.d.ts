@@ -25,7 +25,7 @@ export default class Payment implements IPayment {
     refunded_amount: IAmount;
     status: PaymentStatusEnum;
     test: boolean;
-    constructor(instance: any, data: any);
+    constructor(instance: YooKassa, data: Payment);
     get isPending(): boolean;
     get isWaitingForCapture(): boolean;
     get isSucceeded(): boolean;
@@ -33,7 +33,7 @@ export default class Payment implements IPayment {
     get isResolved(): boolean;
     get confirmationUrl(): string;
     reload(): Promise<boolean>;
-    capture(amount: any): Promise<boolean>;
+    capture(amount: number): Promise<boolean>;
     cancel(): Promise<boolean>;
-    refund(amount: any): Promise<import("./refund").default>;
+    refund(amount: number): Promise<import("./refund").default>;
 }

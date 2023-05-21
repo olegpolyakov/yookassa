@@ -104,7 +104,7 @@ export default class Payment implements IPayment {
 	 * @param amount
 	 * @returns {*}
 	 */
-	capture(amount: number) {
+	capture(amount: IAmount) {
 		return this._instance
 			.capturePayment(this.id, amount || this.amount)
 			.then((data) => {
@@ -129,7 +129,7 @@ export default class Payment implements IPayment {
 	 * @param amount
 	 * @returns {*|Promise.<Refund>}
 	 */
-	refund(amount: number) {
+	refund(amount: IAmount) {
 		return this._instance.createRefund(this.id, amount || this.amount)
 	}
 }

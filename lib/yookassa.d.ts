@@ -1,5 +1,6 @@
 import Payment from './payment';
 import Refund from './refund';
+import { ICreatePaymentRequest } from './types/Payment';
 export default class YooKassa {
     shopId: string;
     secretKey: string;
@@ -15,11 +16,11 @@ export default class YooKassa {
         timeout?: number;
         retryDelay?: number;
     });
-    createPayment(payload: any, idempotenceKey: any): Promise<Payment>;
-    getPayment(paymentId: any, idempotenceKey?: any): Promise<Payment>;
-    capturePayment(paymentId: any, amount: any, idempotenceKey?: any): Promise<Payment>;
-    cancelPayment(paymentId: any, idempotenceKey?: any): Promise<Payment>;
+    createPayment(payload: ICreatePaymentRequest, idempotenceKey: string): Promise<Payment>;
+    getPayment(paymentId: string, idempotenceKey?: string): Promise<Payment>;
+    capturePayment(paymentId: string, amount: number, idempotenceKey?: string): Promise<Payment>;
+    cancelPayment(paymentId: string, idempotenceKey?: string): Promise<Payment>;
     createRefund(paymentId: any, amount: any, idempotenceKey?: any): Promise<Refund>;
     getRefund(refundId: any, idempotenceKey?: any): Promise<Refund>;
-    request(method: any, path: any, payload: any, idempotenceKey?: any): Promise<any>;
+    request<T>(method: any, path: any, payload: any, idempotenceKey?: any): Promise<T>;
 }
