@@ -17,7 +17,7 @@ export default class YooKassa {
         timeout?: number;
         retryDelay?: number;
     });
-    createPayment(payload: ICreatePaymentRequest, idempotenceKey: string): Promise<Payment>;
+    createPayment(payload: ICreatePaymentRequest, idempotenceKey?: string): Promise<Payment>;
     getPayment(paymentId: string, idempotenceKey?: string): Promise<Payment>;
     capturePayment(paymentId: string, amount: IAmount, idempotenceKey?: string): Promise<Payment>;
     cancelPayment(paymentId: string, idempotenceKey?: string): Promise<Payment>;
