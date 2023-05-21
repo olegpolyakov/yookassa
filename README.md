@@ -82,7 +82,12 @@ description: "Заказ №72"
 
 ## История версий
 ```
+0.1.11 @ 22 May 2023  
+- Upgrade app version to 0.1.11  
+- Fix publish script
+
 0.1.10 @ 22 May 2023  
+- Release version 0.1.10  
 - Upgrade app version to 0.1.10
 
 0.1.9 @ 22 May 2023  
