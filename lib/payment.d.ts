@@ -33,7 +33,7 @@ export default class Payment implements IPayment {
     get isResolved(): boolean;
     get confirmationUrl(): string;
     reload(): Promise<boolean>;
-    capture(amount: number): Promise<boolean>;
+    capture(amount: IAmount): Promise<boolean>;
     cancel(): Promise<boolean>;
-    refund(amount: number): Promise<import("./refund").default>;
+    refund(amount: IAmount): Promise<import("./refund").default>;
 }
