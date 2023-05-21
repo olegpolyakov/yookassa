@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 git switch master || exit 1
-node index.js inc patch
+yarn itsbz-onever inc patch
 ver=$(node index.js get --machine)
 git checkout .onever.json
-node index.js set "$ver" && node index.js apply
+yarn itsbz-onever set "$ver" && yarn itsbz-onever apply
 git add ./.onever.json ./package.json
 git commit -m "Upgrade app version"
 git tag "$ver"
