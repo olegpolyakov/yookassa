@@ -10,13 +10,13 @@
 ## Установка
 
 ```sh
-npm i yookassa
+npm i yookassa-ts
 ```
 
 ## Начало работы
 
 ```js
-const Yookassa = require('yookassa');
+import YooKassa from 'yookassa-ts/lib/yookassa'
 
 const yooKassa = new Yookassa({
     shopId: '<Идентификатор магазина>',
