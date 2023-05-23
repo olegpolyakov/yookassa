@@ -1,7 +1,6 @@
 # Yookassa API для Node.js
 
-Клиент для работы с платежами по API Yookassa. 
-Подходит тем, у кого способ подключения называется API.
+Клиент для работы с платежами по API Yookassa. Подходит тем, у кого способ подключения называется API.
 
 ## Требования
 
@@ -83,8 +82,13 @@ description: "Заказ №72"
 
 ## История версий
 ```
+0.1.14 @ 24 May 2023  
+- Fix usage tips in README  
+- Upgrade app version to 0.1.14
+
 0.1.13 @ 22 May 2023  
 - Upgrade app version to 0.1.13  
+- Release version 0.1.13  
 - Fix non required idempotenceKey for createPayment method
 
 0.1.12 @ 22 May 2023  
