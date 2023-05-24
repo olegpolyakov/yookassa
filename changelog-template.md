@@ -19,23 +19,23 @@ npm i yookassa-ts
 import YooKassa from 'yookassa-ts/lib/yookassa'
 
 const yooKassa = new Yookassa({
-shopId: '<Идентификатор магазина>',
-secretKey: '<Секретный ключ>'
+    shopId: '<Идентификатор магазина>',
+    secretKey: '<Секретный ключ>'
 });
 
 const payment = await yooKassa.createPayment({
-amount: {
-value: "2.00",
-currency: "RUB"
-},
-payment_method_data: {
-type: "bank_card"
-},
-confirmation: {
-type: "redirect",
-return_url: "https://www.merchant-website.com/return_url"
-},
-description: "Заказ №72"
+    amount: {
+      value: "2.00",
+      currency: "RUB"
+    },
+    payment_method_data: {
+        type: "bank_card"
+    },
+    confirmation: {
+      type: "redirect",
+      return_url: "https://www.merchant-website.com/return_url"
+    },
+    description: "Заказ №72"
 });
 ```
 
@@ -50,6 +50,7 @@ description: "Заказ №72"
 | `createRefund`   | [Создание возврата](https://yookassa.ru/developers/api#create_refund)       |
 | `getRefund`      | [Информация о возврате](https://yookassa.ru/developers/api#get_refund)      |
 
+
 ## API платежа
 
 ### Свойства
@@ -63,6 +64,7 @@ description: "Заказ №72"
 | `isResolved`          | Равен ли статус платежа `succeeded` или `canceled` |
 | `confirmationUrl`     | URL для подтверждения                              |
 
+
 ### Методы
 
 | Название  | Аргументы | Описание                      |
@@ -71,6 +73,7 @@ description: "Заказ №72"
 | `capture` | amount    | Подтвердить платеж            |
 | `cancel`  |           | Отменить платеж               |
 | `refund`  | amount    | Вернуть платеж                |
+
 
 ## API возврата
 
@@ -82,70 +85,10 @@ description: "Заказ №72"
 
 ## История версий
 ```
-0.1.14 @ 24 May 2023  
-- Fix usage tips in README  
-- Upgrade app version to 0.1.14
+{{#each releases}}{{title}} @ {{niceDate}}{{#commits}}  
+  - {{subject}}{{/commits}}
 
-0.1.13 @ 22 May 2023  
-- Upgrade app version to 0.1.13  
-- Release version 0.1.13  
-- Fix non required idempotenceKey for createPayment method
-
-0.1.12 @ 22 May 2023  
-- Release version 0.1.12  
-- Upgrade app version to 0.1.12
-
-0.1.11 @ 22 May 2023  
-- Upgrade app version to 0.1.11  
-- Release version 0.1.11  
-- Fix publish script
-
-0.1.10 @ 22 May 2023  
-- Upgrade app version to 0.1.8  
-- Release version 0.1.9  
-- Fix publish script  
-- Release version 0.1.10  
-- Upgrade app version to 0.1.10  
-- Upgrade app version to 0.1.9  
-- Fix publish script  
-- Fix publish script
-
-0.1.7 @ 22 May 2023  
-- Fix publish script  
-- Upgrade app version
-
-0.1.6 @ 22 May 2023  
-- Upgrade app version
-
-0.1.5 @ 22 May 2023  
-- Upgrade app version
-
-0.1.4 @ 22 May 2023  
-- Fix bank_card structure  
-- Upgrade app version
-
-0.1.3 @ 21 May 2023  
-- Fix publish  
-- Fix Amount types  
-- Add new build  
-- Upgrade app version
-
-0.1.2 @ 21 May 2023  
-- Initial commit  
-- Restore original logics with injected typings  
-- WIP: Add almost all of used types, enums and annotations  
-- Initial commit  
-- Fix typings in main module, add publish script and changelog  
-- Fix publish script  
-- Update Readme  
-- Refactor YooKassa class  
-- Fix version  
-- Upgrade app version  
-- Fix publish script  
-- Fix publish script  
-- Update version  
-- Update README.md
-
+{{/each}}
 ```
 
 ## Контакты
